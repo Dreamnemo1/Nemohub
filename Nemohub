@@ -1,0 +1,259 @@
+local Rayfield = loadstring(game:HttpGet('https://sirius.menu/rayfield'))()
+
+local Window = Rayfield:CreateWindow({
+   Name = "Realistic Gun Game Script",
+       LoadingTitle = "Nemohub",
+   LoadingSubtitle = "by Nemo And Asta🔥😈",
+   ConfigurationSaving = {
+      Enabled = False,
+      FolderName = nil, -- Create a custom folder for your hub/game
+          FileName = "NemoHub"
+   },
+   Discord = {
+      Enabled = true,
+      Invite = "2Q4g84v8Hn", -- The Discord invite code, do not include discord.gg/. E.g. discord.gg/ABCD would be ABCD
+      RememberJoins = true -- Set this to false to make them join the discord every time they load it up
+   },
+   KeySystem = True, -- Set this to true to use our key system
+   KeySettings = {
+      Title = "NemoHub Key",
+      Subtitle = "Key System",
+      Note = "Get the key from pastebin or join our discord server and dm a staff for the key.",
+      FileName = "NemoHubKey", -- It is recommended to use something unique as other scripts using Rayfield may overwrite your key file
+      SaveKey = False, -- The user's key will be saved, but if you change the key, they will be unable to use your script
+      GrabKeyFromSite = False, -- If this is true, set Key below to the RAW site you would like Rayfield to get the key from
+      Key = {"https://pastebin.com/3wX8ZXF5"} -- List of keys that will be accepted by the system, can be RAW file links (pastebin, github etc) or simple strings ("hello","key22")
+   }
+})
+
+local MainTab = Window:CreateTab("Real Shit😈🔥", nil) -- Title, Image
+local MainSection = MainTab:CreateSection("Aimbot And Misc")
+
+Rayfield:Notify({
+       Title = "Credits?",
+   Content = "Nemo and asta on top ",
+   Duration = 5,
+   Image = nil,
+   Actions = { -- Notification Buttons
+      Ignore = {
+         Name = "Okay!",
+         Callback = function()
+         print("The user tapped Okay!")
+      end
+   },
+},
+})
+
+local Button = MainTab:CreateButton({
+   Name = "Aimbot",
+   Callback = function()
+  local Players = game:GetService("Players")
+local UserInputService = game:GetService("UserInputService")
+local Camera = game.Workspace.CurrentCamera
+
+local isCameraLocked = false
+local lockedPlayer = nil
+local previousMousePosition = nil
+
+-- Function to lock the camera onto a player
+local function lockCameraToPlayer(player)
+    if player and player.Character then
+        isCameraLocked = true
+        lockedPlayer = player
+        Camera.CameraType = Enum.CameraType.Custom
+        previousMousePosition = UserInputService:GetMouseLocation()
+    end
+end
+
+-- Function to unlock the camera
+local function unlockCamera()
+    isCameraLocked = false
+    lockedPlayer = nil
+    Camera.CameraType = Enum.CameraType.Custom
+end
+
+-- Function to update the camera position based on mouse movement
+local function updateCamera()
+    if isCameraLocked and lockedPlayer and lockedPlayer.Character then
+        local mousePosition = UserInputService:GetMouseLocation()
+        local mouseDelta = mousePosition - previousMousePosition
+        local cameraPosition = Camera.CFrame.Position
+        local cameraLookVector = (lockedPlayer.Character.HumanoidRootPart.Position - cameraPosition).unit
+        local cameraRightVector = cameraLookVector:Cross(Vector3.new(0, 1, 0)).unit
+
+        local sensitivity = 0.1  -- Adjust the sensitivity as needed
+
+        local newCameraPosition = cameraPosition + cameraRightVector * mouseDelta.x * sensitivity
+        local newCameraLookVector = (lockedPlayer.Character.HumanoidRootPart.Position - newCameraPosition).unit
+
+        Camera.CFrame = CFrame.new(newCameraPosition, newCameraPosition + newCameraLookVector * 15)
+        previousMousePosition = mousePosition
+    end
+end
+
+-- Function to toggle camera lock
+local function toggleCameraLock()
+    if isCameraLocked then
+        unlockCamera()
+    else
+        local closestPlayer = nil
+        local closestDistance = math.huge
+
+        local localPlayer = Players.LocalPlayer
+        local localCharacter = localPlayer.Character
+
+        if localCharacter then
+            local localPosition = localCharacter.HumanoidRootPart.Position
+
+            for _, player in pairs(Players:GetPlayers()) do
+                if player ~= localPlayer and player.Character then
+                    local playerPosition = player.Character.HumanoidRootPart.Position
+                    local distance = (playerPosition - localPosition).Magnitude
+                    if distance < closestDistance then
+                        closestDistance = distance
+                        closestPlayer = player
+                    end
+                end
+            end
+
+            lockCameraToPlayer(closestPlayer)
+        end
+    end
+end
+
+-- Listen for the 'Q' key press to toggle camera lock
+UserInputService.InputBegan:Connect(function(input)
+    if input.KeyCode == Enum.KeyCode.Q then
+        toggleCameraLock()
+    end
+end)
+
+-- Listen for camera updates
+UserInputService.InputChanged:Connect(function(input)
+    if isCameraLocked and input.UserInputType == Enum.UserInputType.MouseMovement then
+        updateCamera()
+    end
+end)
+
+-- Unlock the camera when the player leaves the game
+game.Players.PlayerRemoving:Connect(function(player)
+    if player == Players.LocalPlayer then
+        unlockCamera()
+    end
+end)
+   end,
+})
+
+local Slider = MainTab:CreateSlider({
+   Name = "WalkSpeed Slider",
+   Range = {0, 300},
+   Increment = 16,
+   Suffix = "Speed",
+   CurrentValue = 16,
+   Flag = "Slider1", -- A flag is the identifier for the configuration file, make sure every element has a different flag if you're using configuration saving to ensure no overlaps
+   Callback = function(Value)
+        game.Players.LocalPlayer.Character.Humanoid.WalkSpeed = (Value)
+   end,
+})
+
+local Dropdown = MainTab:CreateDropdown({
+   Name = "Tp 3000 studs away",
+   Options = {"3K studs away","Option 2"},
+   CurrentOption = {"3k studs away"},
+   MultipleOptions = false,
+   Flag = "Teleport", -- A flag is the identifier for the configuration file, make sure every element has a different flag if you're using configuration saving to ensure no overlaps
+   Callback = function(Option)
+local player = game.Players.LocalPlayer
+local character = player.Character
+
+if character then
+    local currentPos = character.PrimaryPart.Position
+    character:SetPrimaryPartCFrame(CFrame.new(currentPos.x, currentPos.y + 3000, currentPos.z))
+end
+   end,
+})
+
+local EspTab = Window:CreateTab("Esp", Nil) -- Title, Image
+local Section = EspTab:CreateSection("Esp")
+
+local Button = EspTab:CreateButton({
+   Name = "Esp",
+   Callback = function()
+    -- Function to create a red outline over a player's entire body
+local function createRedOutline(character)
+    local outline = Instance.new("SelectionBox")
+    outline.Adornee = character
+    outline.Color = BrickColor.new("Bright red")
+    outline.LineThickness = 0.1
+    outline.Transparency = 0.5
+    outline.Parent = character
+end
+
+-- Function to highlight the entire body of a player with a red outline
+local function highlightBody(player)
+    local character = player.Character
+    if character then
+        createRedOutline(character)
+    end
+end
+
+while true do
+    for _, player in ipairs(game.Players:GetPlayers()) do
+        highlightBody(player)
+    end
+    wait(0.1)  -- Refresh every 0.1 seconds
+end
+   end,
+})
+
+local HitBoxTab = Window:CreateTab("Hitbox", Nil) -- Title, Image
+local Section = HitBoxTab:CreateSection("Hitbox")
+
+local Toggle = HitBoxTab:CreateToggle({
+   Name = "HitBox Toggle",
+   CurrentValue = false,
+   Flag = "HitBox", -- A flag is the identifier for the configuration file, make sure every element has a different flag if you're using configuration saving to ensure no overlaps
+   Callback = function(Value)
+-- This script should be placed in ServerScriptService
+
+-- Get the Players service
+local Players = game:GetService("Players")
+
+-- Define a function to extend a player's hitbox
+local function extendHitbox(player)
+    -- Get the player's character
+    local character = player.Character
+    -- Check if the character exists
+    if character then
+        -- Loop through all the parts in the character
+        for _, part in pairs(character:GetChildren()) do
+            -- Check if the part is a BasePart (such as a limb or a head)
+            if part:IsA("BasePart") then
+                -- Get the current size of the part
+                local size = part.Size
+                -- Set the new size of the part to 10 in all dimensions
+                part.Size = Vector3.new(10, 10, 10)
+                -- Adjust the position of the part to keep it relative to the character's center
+                part.Position = part.Position + (part.Size - size) / 2
+                -- Disable the collision of the part
+                part.CanCollide = false
+            end
+        end
+    end
+end
+
+-- Define a function to refresh the hitboxes every 0.1 seconds
+local function refreshHitboxes()
+    -- Loop through all the players and extend their hitboxes
+    for _, player in pairs(Players:GetPlayers()) do
+        extendHitbox(player)
+    end
+    -- Wait for 0.1 seconds before repeating the function
+    wait(0.1)
+    refreshHitboxes()
+end
+
+-- Start refreshing the hitboxes when the game starts
+refreshHitboxes()
+   end,
+})
